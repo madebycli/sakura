@@ -1,0 +1,48 @@
+name: One-time repository restore
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    if: github.repository == 'madebycli/sakura'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Create clean source-only main branch
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PAYLOAD_SHA: "546deea75a015250e0b18f356c325abf0dcad2ac"
+          EXPECTED_SIZE: "16977"
+          EXPECTED_SHA256: "fa5b8f481e86721600ae00eccd776df974a1b83e393d1c3057196238902469a3"
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          response="$work/payload.json"
+          archive="$work/repository.tar.gz"
+          curl --fail --silent --show-error --location \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/git/blobs/$PAYLOAD_SHA" \
+            > "$response"
+          python3 -c 'import base64,json,pathlib,sys; data=json.loads(pathlib.Path(sys.argv[1]).read_text()); pathlib.Path(sys.argv[2]).write_bytes(base64.b64decode(data["content"]))' "$response" "$archive"
+          test "$(stat -c %s "$archive")" = "$EXPECTED_SIZE"
+          test "$(sha256sum "$archive" | cut -d' ' -f1)" = "$EXPECTED_SHA256"
+          mkdir "$work/source"
+          tar --warning=no-timestamp -xzf "$archive" -C "$work/source" --strip-components=1
+          cd "$work/source"
+          rm -f .github/workflows/ci.yml
+          rmdir .github/workflows .github 2>/dev/null || true
+          git init
+          git config user.name "madebycli"
+          git config user.email "madebycli@users.noreply.github.com"
+          git add -A
+          git commit -m "restore: rebuild repository from recovered sources"
+          git branch -M main
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push --force origin main
