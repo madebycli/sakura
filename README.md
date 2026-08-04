@@ -1,270 +1,145 @@
-# sakura 🌸
+<p align="center">
+  <img src="assets/readme-banner.svg" alt="sakura — a procedural cherry tree for your terminal" width="100%">
+</p>
 
-A procedural Sakura tree with falling petals for Unix-like terminals. The runtime is implemented in one Python file, uses only the Python standard library, and ships as a reproducible Nix Flake and an Arch Linux package.
+<p align="center">
+  <a href="https://github.com/madebycli/sakura/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/madebycli/sakura/actions/workflows/ci.yml/badge.svg?branch=main"></a>
+  <img alt="Python 3.10+" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white">
+  <img alt="Zero runtime dependencies" src="https://img.shields.io/badge/runtime-stdlib%20only-ff8fbd">
+  <img alt="License MIT" src="https://img.shields.io/badge/license-MIT-2ea44f">
+</p>
 
-## Original project and maintainer
+<p align="center">
+  A living cherry tree for Unix-like terminals, drawn fresh every time it grows.
+</p>
 
-This Python rewrite is derived from the original [`csakura`](https://github.com/realstrawhat/csakura) project created and maintained by [`realstrawhat`](https://github.com/realstrawhat). The original project's authorship and MIT license are preserved and credited here.
+`sakura` is a single-file Python terminal animation with procedural branches, layered blossoms, falling petals, responsive resizing, and a collection of carefully tuned color palettes.
 
-## Features
+It uses only the Python standard library at runtime. There is no network access, telemetry, subprocess launcher, or persistent application state.
 
-- responsive, organic Sakura canopy
-- falling two-cell petal sprites
-- Unicode and ASCII rendering
-- 15 color palettes
-- configurable FPS, density, and wind
-- deterministic seeds
-- resize handling and terminal cleanup
-- no network access, subprocesses, telemetry, or persistent application files
-- Python 3.10 or newer
+## Quick start
 
-## Commands
+Run with Nix:
 
-The installed public command is:
-
-```sh
-sakura
-```
-
-The checkout remains directly runnable:
-
-```sh
-python3 ./sakura.py
-```
-
-Useful non-interactive checks:
-
-```sh
-sakura --help
-sakura --version
-sakura --self-test
-```
-
-## Usage
-
-```text
-sakura [-f FPS] [-p DENSITY] [-w WIND] [-c PALETTE] [-a]
-
--f, --fps       5-60, default 20
--p, --density   1-10, default 5
--w, --wind      0-10, default 1
--c, --palette   palette name, default sakura
--a, --ascii     ASCII-only glyphs
---seed          deterministic tree and animation seed
---self-test     non-interactive integrity test
--v, --version   print version
-```
-
-Palettes:
-
-`sakura`, `rose`, `blush`, `magenta`, `peach`, `coral`, `sunset`, `gold`, `lavender`, `violet`, `sky`, `mint`, `matcha`, `white`, `ink`
-
-Keys:
-
-- `q`, `Q`, or `Esc`: quit
-- `r` or `R`: regrow
-- `c`: next palette
-- `C`: previous palette
-
-## Nix and NixOS
-
-Nix is the primary packaged distribution target.
-
-Run without installing:
-
-```sh
-nix run github:madebycli/sakura -- --help
+```bash
 nix run github:madebycli/sakura
+```
+
+Run directly from a checkout:
+
+```bash
+python3 sakura.py
 ```
 
 Install into the current Nix profile:
 
-```sh
-nix profile add github:madebycli/sakura
-sakura --self-test
+```bash
+nix profile add github:madebycli/sakura#sakura
 sakura
 ```
 
-Build and verify a checkout:
+## Highlights
 
-```sh
-nix flake metadata --no-write-lock-file .
-nix flake check --no-write-lock-file --print-build-logs
-nix build .#default --no-write-lock-file
-./result/bin/sakura --self-test
-nix run .#default -- --help
+- Procedural tree structure with an organic, responsive canopy
+- Animated two-cell petals with configurable density and wind
+- Unicode and ASCII rendering modes
+- Fifteen built-in color palettes
+- Deterministic scenes through `--seed`
+- Clean terminal restoration on exit, resize, signals, and errors
+- One Python source file and zero runtime package dependencies
+- Nix and Arch Linux packaging
+
+## Usage
+
+```text
+sakura [OPTIONS]
+
+-f, --fps FPS          frame rate from 5 to 60
+-p, --density N        petal density from 1 to 10
+-w, --wind N           wind strength from 0 to 10
+-c, --palette NAME     select a color palette
+-a, --ascii            use ASCII-only glyphs
+    --seed INTEGER     use a deterministic scene seed
+    --self-test        run non-interactive integrity checks
+-v, --version          print the version
+-h, --help             show help
 ```
 
-### NixOS Flake integration
+Examples:
 
-Add the input:
+```bash
+sakura --palette lavender --density 8
+sakura --wind 3 --fps 30
+sakura --ascii --palette ink
+sakura --seed 42
+```
+
+## Controls
+
+| Key | Action |
+|:---:|---|
+| `q`, `Q`, `Esc` | Quit |
+| `r`, `R` | Grow a new tree |
+| `c` | Next palette |
+| `C` | Previous palette |
+
+## Palettes
+
+```text
+sakura  rose  blush  magenta  peach
+coral   sunset  gold  lavender  violet
+sky     mint  matcha  white  ink
+```
+
+## NixOS
 
 ```nix
 {
   inputs.sakura.url = "github:madebycli/sakura";
-}
-```
 
-Then add the package in a NixOS module where `inputs` and `pkgs` are available:
-
-```nix
-{
-  inputs,
-  pkgs,
-  ...
-}:
-{
   environment.systemPackages = [
-    inputs.sakura.packages.${pkgs.system}.default
+    inputs.sakura.packages.${pkgs.system}.sakura
   ];
 }
 ```
 
-The Flake exports:
-
-- `packages.x86_64-linux.sakura`
-- `packages.aarch64-linux.sakura`
-- `packages.<system>.default`
-- `apps.<system>.sakura`
-- `apps.<system>.default`
-- `checks.<system>`
-- `devShells.<system>.default`
-
-## Development shell
-
-Enter the pinned development environment:
-
-```sh
-nix develop
-```
-
-Inside the shell:
-
-```sh
-python3 ./sakura.py --help
-python3 ./sakura.py --self-test
-python3 -m unittest discover -s tests -v
-python3 -m build --wheel --no-isolation
-nixfmt --check flake.nix nix/package.nix
-ruff check --select E9,F63,F7,F82 sakura.py tests
-```
-
-The packaged command is also available in the shell:
-
-```sh
-sakura --help
-```
+The flake supports `x86_64-linux` and `aarch64-linux` and exports packages, apps, checks, and a development shell.
 
 ## Python wheel
 
-The common Python package definition is `pyproject.toml`. It installs the single module `sakura.py` and creates the console entry point `sakura = sakura:main`.
+Build and install the standard Python package:
 
-Build locally:
-
-```sh
+```bash
 python3 -m build --wheel --no-isolation
+python3 -m pip install dist/*.whl
+sakura --self-test
 ```
 
-The application never invokes Pip or creates a virtual environment at runtime.
+The installed command is `sakura`.
 
 ## Arch Linux
 
-Arch packaging lives in `packaging/arch/` and builds the same wheel as Nix and local Python builds.
-
-```sh
+```bash
 cd packaging/arch
 makepkg --syncdeps --cleanbuild
 sudo pacman -U ./sakura-*.pkg.tar.zst
 ```
 
-Verify after installation:
+## Development
 
-```sh
-sakura --version
-sakura --self-test
-sakura
-```
-
-The package is architecture-independent Python and therefore uses `arch=('any')`.
-
-## Fedora status
-
-Fedora packaging is intentionally deferred. Nix and Arch are the required targets and must remain green before an RPM specification is added. A future Fedora package should use the same `pyproject.toml` through the Fedora `%pyproject_*` macros.
-
-## Filesystem behavior
-
-The current application does not create configuration, cache, data, or runtime files. It mutates only in-memory animation state and writes to the active terminal.
-
-No application files are written to:
-
-- the Nix store
-- `/usr`
-- Python site-packages
-- the Git checkout
-- the current working directory
-- the user home directory
-
-If persistent features are introduced later, they must use XDG paths:
-
-- config: `$XDG_CONFIG_HOME/sakura`
-- cache: `$XDG_CACHE_HOME/sakura`
-- data: `$XDG_DATA_HOME/sakura`
-- runtime: `$XDG_RUNTIME_DIR/sakura`
-
-## Versioning
-
-`sakura.VERSION` in `sakura.py` is the canonical application version. `pyproject.toml` reads it dynamically. Nix, Arch, CI, and tests repeat the release version where their formats require it and verify that their value matches the application output.
-
-## Branch migration and rollback
-
-The Python rewrite was developed on `rewrite/python-single-file`. Before replacing the historical C-based `main`, the original commit was preserved as:
-
-```text
-backup/main-before-flake-migration-20260721
-```
-
-Original `main` SHA:
-
-```text
-9664fcbffac096acdb44cbc8c81527fb57d13639
-```
-
-Rollback without deleting history:
-
-```sh
-git fetch origin
-git switch -c restore-old-main origin/backup/main-before-flake-migration-20260721
-```
-
-An administrator can restore the remote branch only after verifying the expected current SHA and using a protected pull request or `--force-with-lease`; uncontrolled force pushes must not be used.
-
-## Testing
-
-Mandatory source checks:
-
-```sh
-python3 -m compileall -q .
+```bash
+nix develop
 python3 -m unittest discover -s tests -v
 python3 sakura.py --self-test
-python3 -O sakura.py --self-test
-python3 sakura.py --version
-python3 sakura.py --help
+ruff check .
+nix flake check --print-build-logs
+nix build .#sakura --print-build-logs
 ```
 
-The Nix derivation repeats syntax, unit, import, CLI, self-test, immutable-store, and version checks. GitHub Actions additionally builds the wheel, installs it in an isolated environment, builds the Arch package as an unprivileged user, inspects package contents, and tests Nix installation from the exact remote commit.
+The test suite covers option validation, deterministic model behavior, terminal proportions, resize handling, low-color fallback, cleanup, Unicode and ASCII modes, packaging, and Nix builds.
 
-## Supported environments
+## Origins and license
 
-The runtime targets Unix-like terminals with Python's standard `curses` module. Automated Linux PTY and model tests cover Unicode, ASCII, option extremes, resize behavior, low-color fallback, signal cleanup, terminal restoration, and multiple terminal proportions.
+This Python rewrite is derived from [`csakura`](https://github.com/realstrawhat/csakura), created and maintained by [`realstrawhat`](https://github.com/realstrawhat). The original authorship and MIT license remain preserved.
 
-Native NixOS terminal/font combinations and macOS `curses` builds still require environment-specific visual validation. Unicode appearance depends on terminal, locale, and font support; use `--ascii` when needed.
-
-## Architecture and maintenance context
-
-The runtime intentionally remains a single physical file. Logical responsibilities are separated through `Opt`, state dataclasses, `Model`, `Renderer`, `App`, CLI, preflight, and self-test functions.
-
-Future maintainers should read `ai-context/README.md` before changing runtime architecture.
-
-## License
-
-MIT. See `LICENSE`.
+See [`LICENSE`](LICENSE) for the complete license text.
