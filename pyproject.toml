@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sakura"
+dynamic = ["version"]
+description = "Procedural Sakura tree animation for Unix-like terminals"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "sakura contributors" },
+]
+keywords = ["terminal", "curses", "sakura", "animation"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console :: Curses",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Artistic Software",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/madebycli/sakura"
+Repository = "https://github.com/madebycli/sakura"
+Issues = "https://github.com/madebycli/sakura/issues"
+
+[project.scripts]
+sakura = "sakura:main"
+
+[tool.setuptools]
+py-modules = ["sakura"]
+
+[tool.setuptools.dynamic]
+version = { attr = "sakura.VERSION" }

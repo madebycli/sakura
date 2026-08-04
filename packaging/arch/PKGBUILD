@@ -1,0 +1,49 @@
+# Maintainer: sakura contributors
+pkgname=sakura
+pkgver=3.0.4
+pkgrel=1
+pkgdesc='Procedural Sakura tree animation for Unix-like terminals'
+arch=('any')
+url='https://github.com/madebycli/sakura'
+license=('MIT')
+depends=('python')
+makedepends=(
+  'python-build'
+  'python-installer'
+  'python-setuptools'
+  'python-wheel'
+)
+source=()
+sha256sums=()
+
+build() {
+  cd "$startdir/../.."
+  rm -rf build dist *.egg-info
+  python -m build --wheel --no-isolation
+}
+
+check() {
+  cd "$startdir/../.."
+  python -m compileall -q .
+  python -m unittest discover -s tests -v
+  python sakura.py --self-test
+  test "$(python sakura.py --version)" = "sakura $pkgver"
+}
+
+package() {
+  cd "$startdir/../.."
+  python -m installer --destdir="$pkgdir" "dist/sakura-${pkgver}-py3-none-any.whl"
+
+  test -x "$pkgdir/usr/bin/sakura"
+  site_packages=$(find "$pkgdir/usr/lib" -type d -path '*/site-packages' -print -quit)
+  test -n "$site_packages"
+  test -f "$site_packages/sakura.py"
+
+  PYTHONPATH="$site_packages" "$pkgdir/usr/bin/sakura" --help >/dev/null
+  test "$(PYTHONPATH="$site_packages" "$pkgdir/usr/bin/sakura" --version)" = "sakura $pkgver"
+  PYTHONPATH="$site_packages" "$pkgdir/usr/bin/sakura" --self-test | grep -q '^sakura self-test: PASS$'
+
+  ! find "$pkgdir" -path '*/home/*' -o -path '*/.cache/*' -o -path '*/.config/*' \
+    -o -path '*/venv/*' -o -path '*/.git/*' | grep -q .
+  ! find "$pkgdir" -type f \( -name '*.egg-info' -o -name '*.whl' \) | grep -q .
+}

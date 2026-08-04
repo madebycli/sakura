@@ -1,0 +1,14 @@
+pkgbase = sakura
+	pkgdesc = Procedural Sakura tree animation for Unix-like terminals
+	pkgver = 3.0.4
+	pkgrel = 1
+	url = https://github.com/madebycli/sakura
+	arch = any
+	license = MIT
+	makedepends = python-build
+	makedepends = python-installer
+	makedepends = python-setuptools
+	makedepends = python-wheel
+	depends = python
+
+pkgname = sakura
