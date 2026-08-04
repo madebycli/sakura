@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+  <title id="title">sakura</title>
+  <desc id="desc">A luminous cherry tree and drifting petals over a twilight gradient.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#17142f"/>
+      <stop offset="0.5" stop-color="#4b234f"/>
+      <stop offset="1" stop-color="#9b4669"/>
+    </linearGradient>
+    <linearGradient id="petal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff0f7"/>
+      <stop offset="0.5" stop-color="#ffb5d1"/>
+      <stop offset="1" stop-color="#ff7fb5"/>
+    </linearGradient>
+    <radialGradient id="moon">
+      <stop offset="0" stop-color="#fff8e9"/>
+      <stop offset="1" stop-color="#ffd8e9" stop-opacity="0.18"/>
+    </radialGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="11"/></filter>
+  </defs>
+  <rect width="1200" height="360" rx="28" fill="url(#bg)"/>
+  <circle cx="1015" cy="75" r="95" fill="url(#moon)" opacity="0.75" filter="url(#soft)"/>
+  <circle cx="1015" cy="75" r="58" fill="#fff4ef" opacity="0.8"/>
+  <g transform="translate(895 18)">
+    <path d="M64 310C68 248 77 203 112 160C133 134 163 113 205 91" fill="none" stroke="#3a1c35" stroke-width="28" stroke-linecap="round"/>
+    <path d="M93 210C59 172 29 153-9 142M109 165C82 124 60 103 30 88M123 151C161 126 192 111 236 108M82 248C126 225 164 218 214 221" fill="none" stroke="#4c2540" stroke-width="12" stroke-linecap="round"/>
+    <g fill="url(#petal)">
+      <circle cx="-4" cy="137" r="25"/><circle cx="24" cy="119" r="28"/><circle cx="49" cy="147" r="27"/>
+      <circle cx="20" cy="162" r="26"/><circle cx="58" cy="107" r="24"/>
+      <circle cx="21" cy="79" r="24"/><circle cx="52" cy="69" r="29"/><circle cx="79" cy="91" r="25"/>
+      <circle cx="61" cy="119" r="27"/><circle cx="96" cy="113" r="23"/>
+      <circle cx="180" cy="80" r="27"/><circle cx="214" cy="78" r="29"/><circle cx="238" cy="105" r="26"/>
+      <circle cx="201" cy="115" r="30"/><circle cx="165" cy="116" r="26"/>
+      <circle cx="188" cy="202" r="26"/><circle cx="221" cy="208" r="28"/><circle cx="248" cy="226" r="24"/>
+      <circle cx="206" cy="238" r="27"/><circle cx="165" cy="231" r="24"/>
+    </g>
+  </g>
+  <g fill="url(#petal)">
+    <path d="M755 62c17-18 39-4 30 16-11 25-31 18-30-16Z"/>
+    <path d="M702 132c16-17 36-3 28 15-10 23-29 17-28-15Z"/>
+    <path d="M1082 192c14-15 33-3 25 14-9 20-26 15-25-14Z"/>
+    <path d="M790 250c14-15 32-2 25 14-9 20-26 14-25-14Z"/>
+    <path d="M1114 286c16-17 36-3 28 15-10 23-29 17-28-15Z"/>
+  </g>
+  <g font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+    <text x="82" y="135" fill="#ffffff" font-size="72" font-weight="800" letter-spacing="-2">sakura</text>
+    <text x="86" y="185" fill="#ffc7dd" font-size="24" font-weight="700" letter-spacing="2">A PROCEDURAL CHERRY TREE FOR YOUR TERMINAL</text>
+    <text x="86" y="237" fill="#fff1f6" font-size="22">Organic branches, drifting petals, and calm color palettes.</text>
+    <rect x="86" y="273" width="286" height="6" rx="3" fill="url(#petal)"/>
+  </g>
+</svg>
