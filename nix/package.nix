@@ -4,9 +4,21 @@
   python3,
 }:
 
+let
+  versionLines = lib.splitString "\n" (builtins.readFile ../sakura.py);
+  versionLine = lib.findFirst (
+    line: builtins.match "VERSION = \"([^\"]+)\"" line != null
+  ) null versionLines;
+  versionMatch =
+    if versionLine == null then
+      throw "Unable to read Sakura VERSION from sakura.py"
+    else
+      builtins.match "VERSION = \"([^\"]+)\"" versionLine;
+  packageVersion = builtins.elemAt versionMatch 0;
+in
 stdenvNoCC.mkDerivation {
   pname = "sakura";
-  version = "3.0.4";
+  version = packageVersion;
 
   src = lib.cleanSource ../.;
   strictDeps = true;
@@ -44,13 +56,13 @@ stdenvNoCC.mkDerivation {
     find "$out" -type f -exec sha256sum {} + | sort > "$TMPDIR/out-before"
 
     "$out/bin/sakura" --help >/dev/null
-    test "$("$out/bin/sakura" --version)" = "sakura 3.0.4"
+    test "$("$out/bin/sakura" --version)" = "sakura ${packageVersion}"
     "$out/bin/sakura" --self-test | grep -q '^sakura self-test: PASS$'
     ${python3.interpreter} -O "$out/bin/sakura" --self-test \
       | grep -q '^sakura self-test: PASS$'
 
     SCRIPT_PATH="$out/bin/sakura" ${python3.interpreter} -c \
-      'import os, runpy; module = runpy.run_path(os.environ["SCRIPT_PATH"]); assert module["VERSION"] == "3.0.4"; assert callable(module["main"])'
+      'import os, runpy; module = runpy.run_path(os.environ["SCRIPT_PATH"]); assert module["VERSION"] == "${packageVersion}"; assert callable(module["main"])'
 
     ! grep -R -E '/usr/bin/python3|/usr/bin/env|/home/[^/]+|~/|/nix/store/.*/source' \
       "$out/bin"
