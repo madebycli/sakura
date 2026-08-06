@@ -88,7 +88,7 @@
                 chmod 700 "$XDG_RUNTIME_DIR"
 
                 sakura --help >/dev/null
-                test "$(sakura --version)" = "sakura 3.0.4"
+                test "$(sakura --version)" = "sakura ${package.version}"
                 sakura --self-test | grep -q '^sakura self-test: PASS$'
                 touch "$out"
               '';
