@@ -28,7 +28,8 @@ class SakuraTests(unittest.TestCase):
 
         self.assertIn('sakura = "sakura:main"', pyproject)
         self.assertIn('version = { attr = "sakura.VERSION" }', pyproject)
-        self.assertIn(f'version = "{sakura.VERSION}";', nix_package)
+        self.assertIn("builtins.readFile ../sakura.py", nix_package)
+        self.assertIn("version = packageVersion;", nix_package)
         self.assertIn(f"pkgver={sakura.VERSION}", arch_package)
         self.assertIn(f"pkgver = {sakura.VERSION}", srcinfo)
 
